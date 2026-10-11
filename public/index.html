@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f6f8" />
+    <title>Sprint Planner — Jira work, shaped for your capacity</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" type="module"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Sprint Planner home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span>Sprint<span class="brand-light">Planner</span></span>
+        </a>
+        <div class="topbar-right">
+          <span class="connection-indicator" id="connectionIndicator"><span class="indicator-dot"></span><span id="connectionLabel">Not connected</span></span>
+          <button class="button button-quiet button-small hidden" id="disconnectButton" type="button">Disconnect</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="pageTitle">
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="eyebrow-line"></span> A calmer way to plan a sprint</div>
+            <h1 id="pageTitle">Make every available day<br /><span>clear and achievable.</span></h1>
+            <p>Turn Jira stories into focused, reviewable work. You choose your capacity. Sprint Planner drafts the stories, checklists, and definition of done.</p>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+            <div class="orbit-core"><span>8</span><small>days</small></div>
+            <div class="orbit-card orbit-card-top"><span class="orbit-check">✓</span><span>Story drafted</span></div>
+            <div class="orbit-card orbit-card-bottom"><span class="orbit-mini-bars"><i></i><i></i><i></i></span><span>Ready to review</span></div>
+          </div>
+        </section>
+
+        <section class="setup-card" id="connectionPanel" aria-labelledby="connectTitle">
+          <div class="setup-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8.5 7.5a4 4 0 0 1 6.7-2.9l1.2 1.1a4 4 0 0 1 .2 5.7l-1 1M15.5 16.5a4 4 0 0 1-6.7 2.9l-1.2-1.1a4 4 0 0 1-.2-5.7l1-1M9.5 14.5l5-5" /></svg>
+          </div>
+          <div class="setup-copy">
+            <div class="eyebrow">First, connect your workspace</div>
+            <h2 id="connectTitle">Bring your Jira stories into the plan</h2>
+            <p>Connect your Jira Cloud account. Sprint Planner only creates issues after you review and approve the drafts.</p>
+            <div class="notice notice-warning hidden" id="setupWarning" role="status"></div>
+          </div>
+          <button class="button button-primary" id="connectButton" type="button">
+            <span>Connect Jira</span><span class="button-arrow" aria-hidden="true">→</span>
+          </button>
+        </section>
+
+        <section class="planner hidden" id="planner" aria-labelledby="plannerTitle">
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow">Plan your sprint</div>
+              <h2 id="plannerTitle">Set the scope and your capacity</h2>
+            </div>
+            <div class="step-chip"><span class="step-number">01</span><span>Plan inputs</span></div>
+          </div>
+
+          <div class="workspace-choice hidden" id="siteChoiceWrap">
+            <label class="field-label" for="siteSelect">Jira workspace</label>
+            <select id="siteSelect" class="select-control"></select>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label class="field-label" for="projectSelect">Project</label>
+              <select id="projectSelect" class="select-control"><option value="">Choose a project</option></select>
+              <span class="field-hint">The Stories and sprint must belong to this project.</span>
+            </div>
+            <div class="field">
+              <label class="field-label" for="boardSelect">Scrum board</label>
+              <select id="boardSelect" class="select-control" disabled><option value="">Choose a project first</option></select>
+            </div>
+            <div class="field field-span">
+              <label class="field-label" for="sprintSelect">Target sprint</label>
+              <select id="sprintSelect" class="select-control" disabled><option value="">Choose a board first</option></select>
+            </div>
+          </div>
+
+          <div class="capacity-block">
+            <div class="capacity-heading">
+              <div><div class="field-label">Your sprint capacity</div><p>Available days determine how many one-day Stories we draft.</p></div>
+              <div class="capacity-preview" id="capacityPreview"><strong>8</strong><span>Stories to draft</span></div>
+            </div>
+            <div class="days-grid">
+              <div class="field">
+                <label class="field-label" for="sprintDays">Sprint length</label>
+                <div class="input-suffix"><input id="sprintDays" class="text-control" type="number" min="1" max="365" value="10" /><span>workdays</span></div>
+              </div>
+              <div class="field">
+                <label class="field-label" for="availableDays">Days you’re available</label>
+                <div class="input-suffix"><input id="availableDays" class="text-control" type="number" min="1" max="40" value="8" /><span>days</span></div>
+                <span class="field-hint" id="availabilityHint">The other 2 sprint days will stay unplanned.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stories-block">
+            <div class="stories-heading">
+              <div><div class="field-label">Source Stories</div><p>Choose several Stories from the selected sprint. Drafts are shared by scope and Jira priority.</p></div>
+              <span class="selection-count" id="selectionCount">0 selected</span>
+            </div>
+            <label class="search-box" for="storySearch">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4 4"></path></svg>
+              <input id="storySearch" type="search" placeholder="Search Stories by title or key" autocomplete="off" disabled />
+            </label>
+            <div class="issue-list" id="issueList"><div class="empty-state">Choose a project to load its Stories.</div></div>
+          </div>
+
+          <div class="field context-field">
+            <label class="field-label" for="extraContext">Extra planning context <span class="optional-label">Optional</span></label>
+            <textarea id="extraContext" class="text-control textarea-control" rows="3" maxlength="3000" placeholder="Team conventions, constraints, or acceptance details not captured in Jira…"></textarea>
+            <span class="field-hint">This context helps shape the draft. Jira descriptions are treated as source data.</span>
+          </div>
+
+          <div class="form-footer">
+            <p class="privacy-note"><span class="lock-icon" aria-hidden="true">⌑</span> Selected Jira details and your context are sent to OpenAI to draft Stories. Drafts stay in this session until you create them or restart the app.</p>
+            <button class="button button-primary button-large" id="generateButton" type="button" disabled>
+              <span>Generate draft Stories</span><span class="button-arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+          <div class="notice hidden" id="formNotice" role="status"></div>
+        </section>
+
+        <section class="draft-section hidden" id="draftSection" aria-labelledby="draftTitle">
+          <div class="section-heading draft-heading">
+            <div>
+              <div class="eyebrow">Review before creating</div>
+              <h2 id="draftTitle">Your draft Stories</h2>
+              <p class="section-subtitle" id="draftSubtitle"></p>
+            </div>
+            <div class="step-chip"><span class="step-number">02</span><span>Review drafts</span></div>
+          </div>
+          <div class="review-note"><span class="review-icon">✳</span><span>These are one-day estimates. Edit titles, checklists, and DoD to fit your team before creating them.</span></div>
+          <div class="draft-list" id="draftList"></div>
+          <div class="create-footer">
+            <div><strong id="readyCount">0 drafts ready</strong><span>Only these reviewed drafts will be sent to Jira.</span></div>
+            <button class="button button-primary button-large" id="createButton" type="button">Create approved Stories <span class="button-arrow">→</span></button>
+          </div>
+          <div class="notice hidden" id="createNotice" role="status"></div>
+        </section>
+
+        <footer class="footer"><span>Sprint Planner</span><span>Plan work that fits your real capacity.</span></footer>
+      </main>
+    </div>
+    <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
